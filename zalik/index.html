@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Пособие | Главная | МКОУ "СОШ №25"</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo">
+            <div class="logo-img"><i class="fab fa-python"></i></div>
+            <div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div>
+        </div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content" id="mainContent"><div id="dynamicContent"></div></main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Разработка электронного пособия по Python | Факультативные занятия | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    function renderHome() {
+        const container = document.getElementById('dynamicContent');
+        if (currentUserId) {
+            const user = getUserById(currentUserId);
+            const isAdminUser = user && user.isAdmin;
+            container.innerHTML = `
+                <div class="welcome-card">
+                    <h1>🐍 Добро пожаловать на факультатив по Python, ${user ? escapeHtml(user.fullName) : 'ученик'}!</h1>
+                    <p>Электронное пособие разработано специально для учащихся МКОУ «СОШ №25».</p>
+                    <div class="action-buttons">
+                        <button class="btn-primary" id="goCreate"><i class="fas fa-file-alt"></i> Подать заявку на пособие</button>
+                        <button class="btn-secondary" id="goAbout"><i class="fas fa-info-circle"></i> Узнать о пособии</button>
+                        ${isAdminUser ? '<button class="btn-secondary" id="goAdmin"><i class="fas fa-user-shield"></i> Админ-панель</button>' : ''}
+                    </div>
+                </div>
+                <div class="info-blocks">
+                    <div class="info-card"><i class="fab fa-python fa-2x"></i><h3>10+ модулей</h3><p>От основ до ООП</p></div>
+                    <div class="info-card"><i class="fas fa-laptop-code fa-2x"></i><h3>Интерактивные задачи</h3><p>Практика онлайн</p></div>
+                    <div class="info-card"><i class="fas fa-chalkboard-user fa-2x"></i><h3>Поддержка тьюторов</h3><p>Факультатив 2 раза в неделю</p></div>
+                </div>
+            `;
+            document.getElementById('goCreate')?.addEventListener('click',()=>{ window.location.href='create_app.html'; });
+            document.getElementById('goAbout')?.addEventListener('click',()=>{ window.location.href='about.html'; });
+            document.getElementById('goAdmin')?.addEventListener('click',()=>{ window.location.href='admin.html'; });
+        } else {
+            container.innerHTML = `
+                <div class="welcome-card">
+                    <h1>📘 Электронное пособие по Python</h1>
+                    <p>Факультативные занятия в МКОУ «СОШ №25» городского округа.</p>
+                    <div class="action-buttons">
+                        <button class="btn-primary" id="toRegBtn"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
+                        <button class="btn-secondary" id="toAboutBtn"><i class="fas fa-book-open"></i> О пособии</button>
+                    </div>
+                </div>
+                <div class="code-sample">
+                    <i class="fab fa-python"></i> Пример из пособия:<br>
+                    print("Привет, я изучаю Python в СОШ №25!")<br>
+                    for i in range(5):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;print(f"Факультатив — занятие {i+1}")
+                </div>
+            `;
+            document.getElementById('toRegBtn')?.addEventListener('click',()=>{ window.location.href='register.html'; });
+            document.getElementById('toAboutBtn')?.addEventListener('click',()=>{ window.location.href='about.html'; });
+        }
+    }
+    updateHeaderAndMenu();
+    renderHome();
+</script>
+</body>
+</html>

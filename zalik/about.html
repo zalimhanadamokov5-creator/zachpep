@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О пособии | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo"><div class="logo-img"><i class="fab fa-python"></i></div><div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div></div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content">
+            <div class="card">
+                <h1><i class="fab fa-python"></i> О электронном пособии</h1>
+                <p><span class="badge-python">Разработано для МКОУ «СОШ №25»</span></p>
+                <p>Пособие включает теоретические блоки, интерактивные примеры, задачи для самопроверки и проектные работы.</p>
+                <h2>📚 Структура пособия:</h2>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Модуль 1: Введение, установка, первая программа</li>
+                    <li>Модуль 2: Условные операторы, циклы</li>
+                    <li>Модуль 3: Списки, строки, словари</li>
+                    <li>Модуль 4: Функции и рекурсия</li>
+                    <li>Модуль 5: Работа с файлами и исключения</li>
+                    <li>Модуль 6: Основы ООП</li>
+                    <li>Модуль 7: Библиотеки (turtle, matplotlib, random)</li>
+                    <li>Итоговый проект: игра или анализатор данных</li>
+                </ul>
+                <div class="code-sample">
+                    # Пример кода из пособия<br>
+                    import random<br>
+                    secret = random.randint(1,20)<br>
+                    print("Угадайте число от 1 до 20")
+                </div>
+                <button class="btn-secondary" id="backHome">На главную</button>
+            </div>
+        </main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Разработка электронного пособия по Python | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    document.getElementById('backHome')?.addEventListener('click',()=>{ window.location.href='index.html'; });
+</script>
+</body>
+</html>

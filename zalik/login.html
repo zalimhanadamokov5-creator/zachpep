@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo"><div class="logo-img"><i class="fab fa-python"></i></div><div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div></div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content">
+            <div class="form-container">
+                <h1>Авторизация</h1>
+                <div id="loginMsg"></div>
+                <form id="loginForm" class="styled-form">
+                    <div class="form-group"><label>Логин</label><input type="text" id="loginUser" required></div>
+                    <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
+                    <button type="submit" class="btn-primary">Войти</button>
+                </form>
+                <p>Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+                <p style="margin-top:0.5rem; font-size:0.8rem;">Админ: admin / 1234</p>
+            </div>
+        </main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Python Пособие | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    document.getElementById('loginForm').addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const login = document.getElementById('loginUser').value.trim();
+        const pwd = document.getElementById('loginPass').value.trim();
+        const user = users.find(u=>u.login===login && u.password===pwd);
+        if(user){
+            currentUserId = user.id;
+            localStorage.setItem('python_current_user',currentUserId);
+            window.location.href = 'index.html';
+        } else { showMsg('loginMsg','Неверный логин или пароль','error'); }
+    });
+</script>
+</body>
+</html>

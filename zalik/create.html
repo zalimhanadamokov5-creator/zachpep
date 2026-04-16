@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание заявки | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo">
+            <div class="logo-img"><i class="fab fa-python"></i></div>
+            <div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div>
+        </div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content">
+            <div class="form-container">
+                <h1>📝 Заявка на получение пособия</h1>
+                <p>Заполните форму для участия в факультативе по Python</p>
+                <div id="appMsg"></div>
+                <form id="appForm" class="styled-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Адрес проживания *</label>
+                        <input type="text" id="appAddress" required placeholder="г. Москва, ул. Ленина, д.10">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone-alt"></i> Контактный телефон *</label>
+                        <input type="tel" id="appPhone" required placeholder="+7 (900) 123-45-67">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label><i class="fas fa-calendar-day"></i> Желаемая дата начала *</label>
+                            <input type="date" id="appDate" required>
+                        </div>
+                        <div class="form-group half">
+                            <label><i class="fas fa-clock"></i> Удобное время *</label>
+                            <input type="time" id="appTime" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-code"></i> Выберите модуль *</label>
+                        <select id="appService" required>
+                            <option value="">-- Выберите --</option>
+                            <option>Полное электронное пособие (все модули)</option>
+                            <option>Базовый курс: Основы Python</option>
+                            <option>Продвинутый: ООП и библиотеки</option>
+                            <option>Практикум: решение задач</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-download"></i> Тип получения *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="delivery" value="PDF версия" required> 📄 PDF версия</label>
+                            <label><input type="radio" name="delivery" value="Доступ в кабинете"> 💻 Доступ в личном кабинете</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Подать заявку</button>
+                </form>
+                <p style="margin-top:1rem; font-size:0.85rem; color:#666;">* Все поля обязательны для заполнения</p>
+            </div>
+        </main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Python Пособие | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    
+    // Проверка авторизации
+    if (!currentUserId) {
+        window.location.href = 'login.html';
+    }
+    
+    document.getElementById('appForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Собираем данные из формы
+        const address = document.getElementById('appAddress').value.trim();
+        const phone = document.getElementById('appPhone').value.trim();
+        const desiredDate = document.getElementById('appDate').value;
+        const desiredTime = document.getElementById('appTime').value;
+        const serviceType = document.getElementById('appService').value;
+        
+        // Получаем выбранный тип получения
+        let deliveryType = null;
+        const radios = document.querySelectorAll('input[name="delivery"]');
+        for (let i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                deliveryType = radios[i].value;
+                break;
+            }
+        }
+        
+        // Валидация
+        if (!address) {
+            showMsg('appMsg', '❌ Введите адрес!', 'error');
+            return;
+        }
+        if (!phone) {
+            showMsg('appMsg', '❌ Введите телефон!', 'error');
+            return;
+        }
+        if (!desiredDate) {
+            showMsg('appMsg', '❌ Выберите дату!', 'error');
+            return;
+        }
+        if (!desiredTime) {
+            showMsg('appMsg', '❌ Выберите время!', 'error');
+            return;
+        }
+        if (!serviceType) {
+            showMsg('appMsg', '❌ Выберите модуль!', 'error');
+            return;
+        }
+        if (!deliveryType) {
+            showMsg('appMsg', '❌ Выберите тип получения!', 'error');
+            return;
+        }
+        
+        // Создаём ID для новой заявки
+        let newId = 1;
+        if (applications.length > 0) {
+            let maxId = 0;
+            for (let i = 0; i < applications.length; i++) {
+                if (applications[i].id > maxId) {
+                    maxId = applications[i].id;
+                }
+            }
+            newId = maxId + 1;
+        }
+        
+        // Создаём объект заявки
+        const newApplication = {
+            id: newId,
+            userId: currentUserId,
+            address: address,
+            contactPhone: phone,
+            desiredDate: desiredDate,
+            desiredTime: desiredTime,
+            serviceType: serviceType,
+            deliveryType: deliveryType,
+            status: 'новая',
+            createdAt: Date.now()
+        };
+        
+        // Добавляем в массив
+        applications.push(newApplication);
+        
+        // Сохраняем в localStorage
+        localStorage.setItem('python_applications', JSON.stringify(applications));
+        
+        // Показываем сообщение
+        showMsg('appMsg', '✅ Заявка успешно отправлена!', 'success');
+        
+        // Перенаправляем через 1.5 секунды
+        setTimeout(function() {
+            window.location.href = 'my_apps.html';
+        }, 1500);
+    });
+</script>
+</body>
+</html>

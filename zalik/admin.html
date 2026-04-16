@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo"><div class="logo-img"><i class="fab fa-python"></i></div><div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div></div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content" id="dynamicContent"></main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Python Пособие | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    if (!requireAdmin()) {}
+    
+    function renderAdminPanel() {
+        const container = document.getElementById('dynamicContent');
+        const stats = getStats();
+        const allApps = getAllApps();
+        
+        let statsHtml = `
+            <div class="admin-stats">
+                <div class="stat-card"><div class="stat-number">${stats.totalUsers}</div><div>Пользователей</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.totalApps}</div><div>Всего заявок</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.newApps}</div><div>Новых</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.acceptedApps}</div><div>Принятых</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.rejectedApps}</div><div>Отклонённых</div></div>
+            </div>
+        `;
+        
+        if(allApps.length === 0){
+            container.innerHTML = statsHtml + `<div class="card"><h1>Админ-панель</h1><div class="alert info">Заявок пока нет.</div></div>`;
+            return;
+        }
+        
+        let rows = '';
+        allApps.forEach(app => {
+            const user = getUserById(app.userId);
+            let statusClass = '';
+            if(app.status === 'новая') statusClass = 'status-новая';
+            else if(app.status === 'принята') statusClass = 'status-принята';
+            else if(app.status === 'отклонена') statusClass = 'status-отклонена';
+            
+            rows += `<tr>
+                <td>${app.id}</td>
+                <td>${user ? escapeHtml(user.fullName) : 'Неизвестно'}</td>
+                <td>${user ? escapeHtml(user.login) : '?'}</td>
+                <td>${escapeHtml(app.address)}</td>
+                <td>${escapeHtml(app.contactPhone)}</td>
+                <td>${app.desiredDate}</td>
+                <td>${app.desiredTime}</td>
+                <td>${escapeHtml(app.serviceType)}</td>
+                <td>${app.deliveryType}</td>
+                <td><span class="status-badge ${statusClass}">${app.status}</span></td>
+                <td>${new Date(app.createdAt).toLocaleString()}</td>
+                <td>
+                    <button class="btn-success" style="padding:6px 12px; margin:2px;" onclick="acceptRequest(${app.id})"><i class="fas fa-check"></i> Принять</button>
+                    <button class="btn-danger" style="padding:6px 12px; margin:2px;" onclick="rejectRequest(${app.id})"><i class="fas fa-times"></i> Отклонить</button>
+                    <button class="btn-secondary" style="padding:6px 12px; margin:2px; background:#ef4444;" onclick="deleteRequestConfirm(${app.id})"><i class="fas fa-trash"></i> Удалить</button>
+                </td>
+            </tr>`;
+        });
+        
+        container.innerHTML = statsHtml + `
+            <div class="card">
+                <h1><i class="fas fa-user-shield"></i> Админ-панель</h1>
+                <p>Управление заявками на получение электронного пособия по Python</p>
+                <div class="requests-list" style="overflow-x:auto;">
+                    <table class="requests-table">
+                        <thead><tr>
+                            <th>ID</th><th>ФИО</th><th>Логин</th><th>Адрес</th><th>Телефон</th><th>Дата</th><th>Время</th><th>Модуль</th><th>Способ</th><th>Статус</th><th>Создана</th><th>Действия</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+    
+    window.acceptRequest = function(id) {
+        if(updateRequestStatus(id, 'принята')){
+            alert('Заявка принята');
+            renderAdminPanel();
+        }
+    };
+    
+    window.rejectRequest = function(id) {
+        if(updateRequestStatus(id, 'отклонена')){
+            alert('Заявка отклонена');
+            renderAdminPanel();
+        }
+    };
+    
+    window.deleteRequestConfirm = function(id) {
+        if(confirm('Удалить заявку №' + id + '?')){
+            if(deleteRequest(id)){
+                alert('Заявка удалена');
+                renderAdminPanel();
+            }
+        }
+    };
+    
+    renderAdminPanel();
+</script>
+</body>
+</html>

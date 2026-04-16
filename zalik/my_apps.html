@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заявки | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo">
+            <div class="logo-img"><i class="fab fa-python"></i></div>
+            <div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div>
+        </div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content" id="dynamicContent"></main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Python Пособие | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    
+    // Проверка авторизации
+    if (!currentUserId) {
+        document.getElementById('dynamicContent').innerHTML = `
+            <div class="card">
+                <h1>Мои заявки</h1>
+                <div class="alert info">Для просмотра заявок необходимо <a href="login.html">авторизоваться</a>.</div>
+            </div>
+        `;
+    } else {
+        renderMyApps();
+    }
+    
+    function renderMyApps() {
+        const container = document.getElementById('dynamicContent');
+        
+        // Получаем заявки текущего пользователя
+        const userApps = applications.filter(function(app) {
+            return app.userId == currentUserId;
+        }).sort(function(a, b) {
+            return b.createdAt - a.createdAt;
+        });
+        
+        // Кнопка новой заявки
+        const newRequestBtn = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:1.5rem;">
+                <h1>📋 Мои заявки на пособие</h1>
+                <button class="btn-primary" id="newAppBtn" style="cursor:pointer;"><i class="fas fa-plus"></i> Новая заявка</button>
+            </div>
+        `;
+        
+        // Если заявок нет
+        if (userApps.length === 0) {
+            container.innerHTML = newRequestBtn + `
+                <div class="card">
+                    <div class="alert info">📭 Вы ещё не подавали заявку на получение электронного пособия.</div>
+                    <p>Нажмите кнопку «Новая заявка», чтобы подать заявку на участие в факультативе по Python.</p>
+                </div>
+            `;
+            document.getElementById('newAppBtn')?.addEventListener('click', function() {
+                window.location.href = 'create_app.html';
+            });
+            return;
+        }
+        
+        // Формируем таблицу
+        let rows = '';
+        for (let i = 0; i < userApps.length; i++) {
+            const a = userApps[i];
+            let statusClass = '';
+            if (a.status === 'новая') statusClass = 'status-новая';
+            else if (a.status === 'принята') statusClass = 'status-принята';
+            else if (a.status === 'отклонена') statusClass = 'status-отклонена';
+            
+            const createdDate = new Date(a.createdAt).toLocaleString('ru-RU');
+            
+            rows += '<tr>';
+            rows += '<td>' + a.id + '</td>';
+            rows += '<td>' + escapeHtml(a.address || '—') + '</td>';
+            rows += '<td>' + escapeHtml(a.contactPhone || '—') + '</td>';
+            rows += '<td>' + (a.desiredDate || '—') + '</td>';
+            rows += '<td>' + (a.desiredTime || '—') + '</td>';
+            rows += '<td>' + escapeHtml(a.serviceType || '—') + '</td>';
+            rows += '<td>' + (a.deliveryType || '—') + '</td>';
+            rows += '<td><span class="status-badge ' + statusClass + '">' + (a.status || 'новая') + '</span></td>';
+            rows += '<td>' + createdDate + '</td>';
+            rows += '</tr>';
+        }
+        
+        container.innerHTML = newRequestBtn + `
+            <div class="requests-list" style="overflow-x:auto;">
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Адрес</th>
+                            <th>Телефон</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Модуль/Услуга</th>
+                            <th>Способ получения</th>
+                            <th>Статус</th>
+                            <th>Дата подачи</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        `;
+        
+        document.getElementById('newAppBtn')?.addEventListener('click', function() {
+            window.location.href = 'create_app.html';
+        });
+    }
+</script>
+</body>
+</html>

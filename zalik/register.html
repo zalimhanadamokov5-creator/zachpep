@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация | Python Факультатив</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <header class="site-header">
+        <div class="logo"><div class="logo-img"><i class="fab fa-python"></i></div><div><span>PythonПособие</span><small>МКОУ «СОШ №25» г.о.</small></div></div>
+        <div class="header-info" id="headerAuthBlock"></div>
+    </header>
+    <div class="main-container">
+        <aside class="sidebar"><nav class="vertical-menu" id="sidebarMenu"></nav></aside>
+        <main class="content">
+            <div class="form-container">
+                <h1>Регистрация на факультатив</h1>
+                <div id="regMsg"></div>
+                <form id="regForm" class="styled-form">
+                    <div class="form-group"><label><i class="fas fa-user"></i> Логин *</label><input type="text" id="regLogin" required></div>
+                    <div class="form-group"><label><i class="fas fa-lock"></i> Пароль *</label><input type="password" id="regPassword" required></div>
+                    <div class="form-group"><label><i class="fas fa-id-card"></i> ФИО *</label><input type="text" id="regFullName" required></div>
+                    <div class="form-group"><label><i class="fas fa-phone"></i> Телефон *</label><input type="tel" id="regPhone" required></div>
+                    <div class="form-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="regEmail" required></div>
+                    <button type="submit" class="btn-primary"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
+                </form>
+                <p style="margin-top:1rem;">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+            </div>
+        </main>
+    </div>
+    <footer class="site-footer"><p>© 2025 Python Пособие | МКОУ «СОШ №25»</p></footer>
+</div>
+<script src="js/main.js"></script>
+<script>
+    updateHeaderAndMenu();
+    document.getElementById('regForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const login = document.getElementById('regLogin').value.trim();
+        const pwd = document.getElementById('regPassword').value.trim();
+        const fullName = document.getElementById('regFullName').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        if (!login || !pwd || !fullName || !phone || !email) { showMsg('regMsg','Все поля обязательны!','error'); return; }
+        if (users.find(u=>u.login===login)) { showMsg('regMsg','Логин занят','error'); return; }
+        const newId = users.length ? Math.max(...users.map(u=>u.id))+1 : 1;
+        users.push({id:newId, login, password:pwd, fullName, phone, email, isAdmin:false, createdAt:Date.now()});
+        saveUsers();
+        showMsg('regMsg','Регистрация успешна! Теперь войдите.','success');
+        setTimeout(()=>{ window.location.href='login.html'; },1500);
+    });
+</script>
+</body>
+</html>
